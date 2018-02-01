@@ -66,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements
                         MainActivity.this,
                         now.get(Calendar.HOUR_OF_DAY),
                         now.get(Calendar.MINUTE),
-                        false
+                        false,
+                        0 //start time tab selected
                 );
                 tpd.setOnCancelListener(new DialogInterface.OnCancelListener() {
                     @Override
