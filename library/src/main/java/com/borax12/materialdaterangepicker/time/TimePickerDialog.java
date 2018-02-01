@@ -140,6 +140,7 @@ public class TimePickerDialog extends DialogFragment implements OnValueSelectedL
     private TextView mAmPmTextViewEnd;
     private RadialPickerLayout mTimePickerEnd;
     private View mAmPmHitspaceEnd;
+    private int mTabSelectedIndex = 0;
 
 
     /**
@@ -168,27 +169,27 @@ public class TimePickerDialog extends DialogFragment implements OnValueSelectedL
      **/
 
     public static TimePickerDialog newInstance(OnTimeSetListener callback,
-            int hourOfDay, int minute, boolean is24HourMode) {
+            int hourOfDay, int minute, boolean is24HourMode, int tabSelectedIndex) {
         TimePickerDialog ret = new TimePickerDialog();
-        ret.initialize(callback, hourOfDay, minute, is24HourMode);
+        ret.initialize(callback, hourOfDay, minute, is24HourMode, tabSelectedIndex);
         return ret;
     }
 
     public static TimePickerDialog newInstance(OnTimeSetListener callback,
                                                int hourOfDay, int minute, boolean is24HourMode,
-                                                int hourOfDayEnd, int minuteEnd) {
+                                                int hourOfDayEnd, int minuteEnd, int selctedTabIndex) {
         TimePickerDialog ret = new TimePickerDialog();
-        ret.initialize(callback, hourOfDay, minute,hourOfDayEnd,minuteEnd,is24HourMode);
+        ret.initialize(callback, hourOfDay, minute,hourOfDayEnd,minuteEnd,is24HourMode, selctedTabIndex);
         return ret;
     }
 
     public void initialize(OnTimeSetListener callback,
-            int hourOfDay, int minute, boolean is24HourMode) {
-        initialize(callback, hourOfDay, minute, hourOfDay, minute, is24HourMode);
+            int hourOfDay, int minute, boolean is24HourMode, int tabSelectedIndex) {
+        initialize(callback, hourOfDay, minute, hourOfDay, minute, is24HourMode, tabSelectedIndex);
     }
 
     public void initialize(OnTimeSetListener callback,
-                           int hourOfDay, int minute, int hourOfDayEnd, int minuteEnd, boolean is24HourMode) {
+                           int hourOfDay, int minute, int hourOfDayEnd, int minuteEnd, boolean is24HourMode, int selctedTabIndex) {
         mCallback = callback;
 
         mInitialHourOfDay = hourOfDay;
@@ -202,6 +203,7 @@ public class TimePickerDialog extends DialogFragment implements OnValueSelectedL
         mAccentColor = -1;
         mVibrate = true;
         mDismissOnPause = false;
+        mTabSelectedIndex = selctedTabIndex;
     }
 
     /**
@@ -332,6 +334,7 @@ public class TimePickerDialog extends DialogFragment implements OnValueSelectedL
 
         tabHost.addTab(startDatePage);
         tabHost.addTab(endDatePage);
+        tabHost.setCurrentTab(mTabSelectedIndex);//added later
 
         mHourView = (TextView) view.findViewById(R.id.hours);
         mHourView.setOnKeyListener(keyboardListener);
@@ -545,7 +548,13 @@ public class TimePickerDialog extends DialogFragment implements OnValueSelectedL
             view.findViewById(R.id.time_picker_dialog).setBackgroundColor(mThemeDark ? darkBackgroundColor : backgroundColor);
         }
 
-
+        //set EndTab Selected
+        if(mTabSelectedIndex == 1) {
+            setCurrentItemShowing(mTimePickerEnd.getCurrentItemShowing(), true, false, true);
+            setHour(mTimePickerEnd.getHours(), false);
+            setMinute(mTimePickerEnd.getMinutes());
+            updateAmPmDisplay(mTimePickerEnd.getIsCurrentlyAmOrPm());
+        }
 
         tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
